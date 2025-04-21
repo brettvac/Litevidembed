@@ -1,0 +1,35 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "plg_content_litevidembed",
+  "version": "1.0",
+  "description": "Lite embed assets for YouTube and Vimeo",
+  "license": "GPL-2.0+",
+  "assets": [
+    {
+      "name": "lite-youtube",
+      "type": "style",
+      "uri": "plg_content_litevidembed/lite-yt-embed.css"
+    },
+    {
+      "name": "lite-youtube",
+      "type": "script",
+      "uri": "plg_content_litevidembed/lite-yt-embed.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "lite-vimeo",
+      "type": "style",
+      "uri": "plg_content_litevidembed/lite-vimeo-embed.css"
+    },
+    {
+      "name": "lite-vimeo",
+      "type": "script",
+      "uri": "plg_content_litevidembed/lite-vimeo-embed.js",
+      "attributes": {
+        "defer": true
+      }
+    }
+  ]
+}
