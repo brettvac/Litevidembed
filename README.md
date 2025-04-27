@@ -26,12 +26,15 @@ For YouTube, use the syntax
 For vimeo videos, simply use
 `{lite-vimeo}VIDEO_ID{/lite-vimeo}`
 
+To set the embed width in pixels, use `|WIDTH`. The width must be numeric and less than 720px; otherwise, the default width (up to 720px, based on the container) is used.
+`{youtube}https://www.youtube.com/watch?v=VIDEO_ID|300{/youtube}`
+
 ### Supported video IDs
 Use any of the following video IDs in your shortcodes.
 
 #### YouTube
-- Standard watch URL: `{youtube}https://www.youtube.com/watch?v=dQw4w9WgXcQ{/youtube}`
-- Shortened URL: `{youtube}https://youtu.be/dQw4w9WgXcQ?si=abc123{/youtube}`
+- Standard watch URL: `{youtube}https://www.youtube.com/watch?v=abc123xyz{/youtube}`
+- Shortened URL: `{youtube}https://youtu.be/abc123xyz?si=abc123{/youtube}`
 - Shorts URL: `{youtube}https://www.youtube.com/shorts/abc123xyz{/youtube}`
 
 #### Vimeo
