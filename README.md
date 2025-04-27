@@ -20,14 +20,14 @@ Instead, Lite Video Embed replaces iframes with facades—static preview images 
 ## How To Use Lite Video Embed
 Add a simple shortcode to your content. 
 
-For YouTube, use the syntax
-`{youtube}VIDEO_ID{/youtube}`
+For YouTube, use the syntax `{youtube}VIDEO_ID{/youtube}`
 
-For vimeo videos, simply use
-`{lite-vimeo}VIDEO_ID{/lite-vimeo}`
+For vimeo videos, simply use `{lite-vimeo}VIDEO_ID{/lite-vimeo}`
 
 To set the embed width in pixels, use `|WIDTH`. The width must be numeric and less than 720px; otherwise, the default width (up to 720px, based on the container) is used.
-`{youtube}https://www.youtube.com/watch?v=VIDEO_ID|300{/youtube}`
+
+Example usage to set width:
+- `{youtube}https://www.youtube.com/watch?v=VIDEO_ID|300{/youtube}`
 
 ### Supported video IDs
 Use any of the following video IDs in your shortcodes.
