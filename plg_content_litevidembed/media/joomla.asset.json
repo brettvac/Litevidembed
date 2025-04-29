@@ -6,12 +6,12 @@
   "license": "GPL-2.0+",
   "assets": [
     {
-      "name": "lite-youtube",
+      "name": "plg_content_litevidembed.lite-youtube",
       "type": "style",
       "uri": "plg_content_litevidembed/lite-yt-embed.css"
     },
     {
-      "name": "lite-youtube",
+      "name": "plg_content_litevidembed.lite-youtube",
       "type": "script",
       "uri": "plg_content_litevidembed/lite-yt-embed.js",
       "attributes": {
@@ -19,12 +19,12 @@
       }
     },
     {
-      "name": "lite-vimeo",
+      "name": "plg_content_litevidembed.lite-vimeo",
       "type": "style",
       "uri": "plg_content_litevidembed/lite-vimeo-embed.css"
     },
     {
-      "name": "lite-vimeo",
+      "name": "plg_content_litevidembed.lite-vimeo",
       "type": "script",
       "uri": "plg_content_litevidembed/lite-vimeo-embed.js",
       "attributes": {

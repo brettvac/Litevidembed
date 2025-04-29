@@ -13,10 +13,18 @@ use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
 use Joomla\CMS\Factory;
 
+/**
+ * Litevidembed plugin to embed lightweight YouTube and Vimeo videos using shortcodes.
+ */
 class Litevidembed extends CMSPlugin implements SubscriberInterface
 {
     protected $autoloadLanguage = true;
 
+    /**
+     * Returns an array of events this subscriber will listen to.
+     *
+     * @return  array
+     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -24,149 +32,144 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
         ];
     }
 
-   public function replaceVideoShortcodes(Event $event)
-   {
-    if (!$this->getApplication()->isClient('site'))
+    /**
+     * Replaces YouTube and Vimeo shortcodes with lightweight video embeds.
+     *
+     * @param   Event  $event  The onContentPrepare event.
+     * @return  void
+     */
+    public function replaceVideoShortcodes(Event $event)
     {
-        return; // Exit if this request is from the backend (administrator)
-    }
-
-    // Extract event arguments into variables
-    [$context, $article, $params, $page] = array_values($event->getArguments());
-
-    // Skip if the context is the indexer
-    if ($context === 'com_finder.indexer')
-    {
-        return;
-    }
-
-    // Initialize text to process
-    $text = null;
-
-    // Handle different contexts and content properties
-    if ($context === 'com_modules.module')
-    {
-        $text = $params->get('content', '');
-    }
-    elseif (isset($article->text))
-    {
-        $text = &$article->text;
-    }
-    elseif (isset($article->introtext))
-    {
-        $text = &$article->introtext;
-    }
-    elseif (isset($article->description))
-    {
-        $text = &$article->description;
-    }
-    else
-    {
-        // Try to process any string content in $article
-        foreach ((array)$article as $key => $value)
+        if (!$this->getApplication()->isClient('site'))
         {
-            if (is_string($value) && !empty($value) && strpos($value, '{youtube}') !== false || strpos($value, '{vimeo}') !== false)
+            return; // Exit if this request is from the backend (administrator)
+        }
+
+        // Extract event arguments into variables
+        [$context, $article, $params, $page] = array_values($event->getArguments());
+
+        // Skip if the context is the indexer
+        if ($context === 'com_finder.indexer')
+        {
+            return;
+        }
+
+        // Initialize text to process
+        $text = null;
+
+        // Handle different contexts and content properties
+        if ($context === 'com_content.article' || $context === 'com_content.category' || $context === 'com_content.featured')
+        {
+            $text = $article->text; 
+        }
+        elseif ($context === 'com_modules.module')
+        {
+            $text = $params->get('content', '');
+        }
+        else
+        {
+           $text = $article->text;            // Fallback for other contexts
+        }
+
+        // Exit if no valid text found
+        if ($text === null || empty($text))
+        {
+            return;
+        }
+
+        // Check if YouTube or Vimeo shortcodes exist in the text; exit early if neither is found
+        if (strpos($text, '{youtube}') === false && strpos($text, '{vimeo}') === false)
+        {
+            return;
+        }
+
+        $loadYoutube = false;
+        $loadVimeo = false;
+        $offset = 0;
+
+        // Loop through the text to find the next opening brace, starting from the current offset
+        while (($start = strpos($text, '{', $offset)) !== false)
+        {
+            $platform = null;
+            if (substr($text, $start, 9) === '{youtube}')
             {
-                $text = &$article->$key;
-                break;
+                $platform = 'youtube';
+                $tagLength = 9;
+                $closingTag = '{/youtube}';
             }
-        }
-    }
-
-    // Exit if no valid text found
-    if ($text === null || empty($text))
-    {
-        return;
-    }
-
-    // Check if YouTube or Vimeo shortcodes exist in the text; exit early if neither is found
-    if (strpos($text, '{youtube}') === false && strpos($text, '{vimeo}') === false)
-    {
-        return;
-    }
-
-    $loadYoutube = false;
-    $loadVimeo = false;
-    $offset = 0;
-
-    // Loop through the text to find the next opening brace, starting from the current offset
-    while (($start = strpos($text, '{', $offset)) !== false)
-    {
-        $platform = null;
-        if (substr($text, $start, 9) === '{youtube}')
-        {
-            $platform = 'youtube';
-            $tagLength = 9;
-            $closingTag = '{/youtube}';
-        }
-        elseif (substr($text, $start, 7) === '{vimeo}')
-        {
-            $platform = 'vimeo';
-            $tagLength = 7;
-            $closingTag = '{/vimeo}';
-        }
-
-        if ($platform)
-        {
-            if (($end = strpos($text, $closingTag, $start)) !== false)
+            elseif (substr($text, $start, 7) === '{vimeo}')
             {
-                $tagContent = substr($text, $start + $tagLength, $end - $start - $tagLength);
+                $platform = 'vimeo';
+                $tagLength = 7;
+                $closingTag = '{/vimeo}';
+            }
 
-                // Initialize variables
-                $width = null;
-                $videoUrl = $tagContent;
-
-                // Check for width in shortcode
-                if (strpos($tagContent, '|') !== false)
+            if ($platform)
+            {
+                if (($end = strpos($text, $closingTag, $start)) !== false)
                 {
-                    $parts = explode('|', $tagContent);
-                    $videoUrl = htmlspecialchars_decode($parts[0], ENT_QUOTES); // Decode URL or ID
-                    if (isset($parts[1]) && is_numeric($parts[1]) && $parts[1] <= 720)
+                    $tagContent = substr($text, $start + $tagLength, $end - $start - $tagLength);
+
+                    // Initialize variables
+                    $width = null;
+                    $videoUrl = $tagContent;
+
+                    // Check for width of video in shortcode
+                    if (strpos($tagContent, '|') !== false)
                     {
-                        $width = $parts[1] . 'px'; // Set width if valid and ≤ 720px
+                        $parts = explode('|', $tagContent);
+                        $videoUrl = htmlspecialchars_decode($parts[0], ENT_QUOTES); // Decode URL or ID
+                        if (isset($parts[1]) && is_numeric($parts[1]) && $parts[1] <= 720)
+                        {
+                            $width = $parts[1] . 'px'; // Set width if valid and ≤ 720px
+                        }
                     }
-                }
 
-                // Handle platform-specific logic
-                $videoId = null;
-                $replacement = '';
+                    // Create lite video element depending on the platform in the shortcode
+                    $videoId = null;
+                    $replacement = '';
 
-                switch ($platform)
-                {
-                    case 'youtube':
-                        $videoId = $this->extractYoutubeId($videoUrl);
-                        if ($videoId)
-                        {
-                            $divStyle = $width ? " style=\"width: {$width};\"" : '';
-                            $replacement = "<div{$divStyle}><lite-youtube videoid=\"{$videoId}\"></lite-youtube></div>";
-                            $loadYoutube = true;
-                        }
-                        break;
+                    switch ($platform)
+                    {
+                        case 'youtube':
+                            $videoId = $this->extractYoutubeId($videoUrl);
+                            if ($videoId)
+                            {
+                                $style = $width ? " style=\"width: {$width};\"" : "";
+                                $replacement = "<lite-youtube videoid=\"{$videoId}\"{$style}></lite-youtube>";
+                                $loadYoutube = true;
+                            }
+                            break;
 
-                    case 'vimeo':
-                        $videoId = $this->extractVimeoId($videoUrl);
-                        if ($videoId)
-                        {
-                            $divStyle = $width ? " style=\"width: {$width};\"" : '';
-                            $replacement = "<div{$divStyle}><lite-vimeo videoid=\"{$videoId}\"></lite-vimeo></div>";
-                            $loadVimeo = true;
-                        }
-                        break;
+                        case 'vimeo':
+                            $videoId = $this->extractVimeoId($videoUrl);
+                            if ($videoId)
+                            {
+                                $style = $width ? " style=\"width: {$width};\"" : "";
+                                $replacement = "<lite-vimeo videoid=\"{$videoId}\"{$style}></lite-vimeo>";
+                                $loadVimeo = true;
+                            }
+                            break;
 
-                    default:
-                        // No valid platform, skip replacement
+                        default:
+                            // No valid platform, skip replacement
+                            $offset = $end + strlen($closingTag);
+                            continue 2; // Skip to next iteration of while loop
+                    }
+
+                    if ($videoId && $replacement)
+                    {
+                        $text = substr_replace($text, $replacement, $start, $end - $start + strlen($closingTag));
+                        $offset = $start + strlen($replacement);
+                    }
+                    else
+                    {
                         $offset = $end + strlen($closingTag);
-                        continue 2; // Skip to next iteration of while loop
-                }
-
-                if ($videoId && $replacement)
-                {
-                    $text = substr_replace($text, $replacement, $start, $end - $start + strlen($closingTag));
-                    $offset = $start + strlen($replacement);
+                    }
                 }
                 else
                 {
-                    $offset = $end + strlen($closingTag);
+                    $offset = $start + 1;
                 }
             }
             else
@@ -174,46 +177,51 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
                 $offset = $start + 1;
             }
         }
+
+        // Load assets only if needed
+        if ($loadYoutube || $loadVimeo)
+        {
+            $document = Factory::getDocument();
+            $wa = $document->getWebAssetManager();
+
+            try
+            {
+                $wa->getRegistry()->addExtensionRegistryFile('plg_content_litevidembed');
+
+                if ($loadYoutube)
+                {
+                    $wa->useStyle('plg_content_litevidembed.lite-youtube')
+                       ->useScript('plg_content_litevidembed.lite-youtube');
+                    $style = 'lite-youtube { margin: 0 auto; }';
+                    $document->addStyleDeclaration($style);
+                }
+
+                if ($loadVimeo)
+                {
+                    $wa->useStyle('plg_content_litevidembed.lite-vimeo')
+                       ->useScript('plg_content_litevidembed.lite-vimeo');
+                    $style = 'lite-vimeo { margin: 0 auto; }';
+                    $document->addStyleDeclaration($style);
+                }
+            }
+            catch (\Exception $e)
+            {
+                $this->getApplication()->enqueueMessage($e->getMessage(), 'error');
+                return;
+            }
+        }
+
+        // Update module content if inside a module
+        if ($context === 'com_modules.module')
+        {
+            $params->set('content', $text);
+        }
+        
         else
         {
-            $offset = $start + 1;
+            $article->text = $text;  // now update the article text with the processed text
         }
     }
-
-    // Load assets only if needed
-    if ($loadYoutube || $loadVimeo)
-    {
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-
-        try
-        {
-            $wa->getRegistry()->addExtensionRegistryFile('plg_content_litevidembed');
-
-            if ($loadYoutube)
-            {
-                $wa->useStyle('lite-youtube')
-                   ->useScript('lite-youtube');
-            }
-
-            if ($loadVimeo)
-            {
-                $wa->useStyle('lite-vimeo')
-                   ->useScript('lite-vimeo');
-            }
-        }
-        catch (\Exception $e)
-        {
-            $this->getApplication()->enqueueMessage($e->getMessage(), 'error');
-            return;
-        }
-    }
-
-    // Update module content if applicable
-    if ($context === 'com_modules.module')
-    {
-        $params->set('content', $text);
-    }
-  }
 
     /**
      * Extracts the YouTube video ID from a given URL or raw ID string.

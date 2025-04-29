@@ -1,4 +1,9 @@
-class LiteVimeo extends (globalThis.HTMLElement ?? class {}) {
+/**
+ * Ported from https://github.com/chriswthomson/lite-vimeo-embed/
+ *
+ * A lightweight Vimeo embed. Still should feel the same to the user, just MUCH faster to initialize and paint.
+ */
+class LiteVimeo extends HTMLElement {
   /**
    * Begin pre-connecting to warm up the iframe load
    * Since the embed's network requests load within its iframe,
@@ -8,30 +13,37 @@ class LiteVimeo extends (globalThis.HTMLElement ?? class {}) {
   static _warmConnections() {
     if (LiteVimeo.preconnected) return;
     LiteVimeo.preconnected = true;
+
+    // The iframe document and most of its subresources come right off player.vimeo.com
     addPrefetch('preconnect', 'https://player.vimeo.com');
+    // Images
     addPrefetch('preconnect', 'https://i.vimeocdn.com');
+    // Files .js, .css
     addPrefetch('preconnect', 'https://f.vimeocdn.com');
+    // Metrics
     addPrefetch('preconnect', 'https://fresnel.vimeocdn.com');
   }
 
   connectedCallback() {
     this.videoId = this.getAttribute('videoid');
 
-    // Fetch the thumbnail from Vimeo's oEmbed API and set it as the background
-    fetch(`https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F${this.videoId}`)
+    /**
+     * Lo, the Vimeo placeholder image! (aka the thumbnail, poster image, etc)
+     * Use the oEmbed API and set thumbnail resolution to 640x360.
+     */
+    fetch(`https://vimeo.com/api/oembed.json?url=https% Lucia%3A%2F%2Fvimeo.com%2F${this.videoId}`)
       .then(response => response.json())
       .then(data => {
         let thumbnailUrl = data.thumbnail_url;
-        // Replace the size portion with 1280x720 for highest quality thumbnail
-        thumbnailUrl = thumbnailUrl.replace(/_\d+x\d+/, '_1280x720');
+        // Replace the resolution suffix (e.g., "_295x166" or "_295x221") with "_640x360"
+        thumbnailUrl = thumbnailUrl.replace(/-d_\d+x\d+$|_d+x\d+$/, '_640x360');
         this.style.backgroundImage = `url("${thumbnailUrl}")`;
       });
-    
-    // Set up play button, and its visually hidden label
+
     let playBtnEl = this.querySelector('.ltv-playbtn');
+    // A label for the button takes priority over a [playlabel] attribute on the custom-element
     this.playLabel = (playBtnEl && playBtnEl.textContent.trim()) || this.getAttribute('playlabel') || 'Play video';
 
-    // If no play button exists, create one
     if (!playBtnEl) {
       playBtnEl = document.createElement('button');
       playBtnEl.type = 'button';
@@ -39,53 +51,55 @@ class LiteVimeo extends (globalThis.HTMLElement ?? class {}) {
       playBtnEl.classList.add('ltv-playbtn');
       this.append(playBtnEl);
     }
-    playBtnEl.removeAttribute('href'); // Ensure no href attribute remains from potential misuse
-    
-    // On hover (or tap), warm up the TCP connections we're (likely) about to use
-    this.addEventListener('pointerover', LiteVimeo._warmConnections, { once: true });
-    // Add iframe on click
+    playBtnEl.removeAttribute('href');
+
+    // On hover (or tap), warm up the TCP connections we're (likely) about to use.
+    this.addEventListener('pointerover', LiteVimeo._warmConnections, {
+      once: true
+    });
+
+    // Once the user clicks, add the real iframe and drop our play button
     this.addEventListener('click', this.addIframe);
   }
 
-  /**
-   * Add the iframe when the user clicks, replacing the placeholder
-   */
   addIframe() {
     if (this.classList.contains('ltv-activated')) return;
     this.classList.add('ltv-activated');
 
+    const params = new URLSearchParams(this.getAttribute('params') || []);
+    params.append('autoplay', '1');
+    params.append('playsinline', '1');
+
     const iframeEl = document.createElement('iframe');
-    iframeEl.width = 640;  // Default width, will be overridden by CSS
-    iframeEl.height = 360; // Default height, will be overridden by CSS
-    iframeEl.title = this.playLabel; // No encoding necessary as [title] is safe for XSS
+    iframeEl.width = 640;
+    iframeEl.height = 360;
+    // No encoding necessary as [title] is safe.
+    iframeEl.title = this.playLabel;
     iframeEl.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
-    // URL encoding for src to ensure safety, though not strictly necessary here
-    iframeEl.src = `https://player.vimeo.com/video/${encodeURIComponent(this.videoId)}?autoplay=1`;
+    iframeEl.allowFullscreen = true;
+    // AFAIK, the encoding here isn't necessary for XSS, but we'll do it only because this is a URL
+    // https://stackoverflow.com/q/64959723/89484
+    iframeEl.src = `https://player.vimeo.com/video/${encodeURIComponent(this.videoId)}?${params.toString()}`;
     this.append(iframeEl);
 
-    // Set focus for accessibility after loading
+    // Set focus for a11y
     iframeEl.addEventListener('load', () => iframeEl.focus(), { once: true });
   }
 }
 
-/**
- * Register custom element only if not already defined
- */
-if (globalThis.customElements && !globalThis.customElements.get('lite-vimeo')) {
-  globalThis.customElements.define('lite-vimeo', LiteVimeo);
-}
+// Register custom element
+customElements.define('lite-vimeo', LiteVimeo);
 
 /**
  * Add a <link rel={preload | preconnect} ...> to the head
- * @param {string} kind - Type of prefetch (e.g., 'preconnect')
- * @param {string} url - URL to prefetch
- * @param {string} [as] - Optional 'as' attribute for prefetch
  */
 function addPrefetch(kind, url, as) {
   const linkElem = document.createElement('link');
   linkElem.rel = kind;
   linkElem.href = url;
-  if (as) linkElem.as = as;
-  linkElem.crossorigin = true; // Required for cross-origin preconnects
+  if (as) {
+    linkElem.as = as;
+  }
+  linkElem.crossorigin = true;
   document.head.append(linkElem);
 }
