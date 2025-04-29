@@ -47,6 +47,6 @@ This plugin requires Joomla versions greater than 4.4 and PHP 8.1.
 Contributing
 ------------
 **[Lite Youtube Embed](https://github.com/paulirish/lite-youtube-embed)** by Paul Irish
-**[Lite Vimeo Embed](https://github.com/luwes/lite-vimeo-embed)** by Wesley Luyten
+**[Lite Vimeo Embed](https://github.com/chriswthomson/lite-vimeo-embed/)** by Chris Thomson
 **[Facades Plugin](https://brokenlinkchecker.dev/extensions/plg-system-facades)**
 **[Lite Youtube](https://github.com/brianteeman/ytlite)** by Brian Teeman
