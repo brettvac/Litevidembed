@@ -1,0 +1,17 @@
+title: Free Joomla! Extensions by naftee.com
+description: Lite Vid Embed plugin for displaying façades (fast loading) of Vimeo and/or YouTube videos
+url: "https://naftee.com"
+baseurl: "/Litevidembed"
+github_username: brettvac
+
+author:
+  twitter: naftee
+  name: Brett Vachon
+
+google_analytics: G-DP5DG417G7
+
+theme: jekyll-theme-cayman
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
