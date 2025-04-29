@@ -29,15 +29,25 @@ class LiteVimeo extends HTMLElement {
 
     /**
      * Lo, the Vimeo placeholder image! (aka the thumbnail, poster image, etc)
-     * Use the oEmbed API and set thumbnail resolution to 640x360.
+     * Use the oEmbed API and dynamically calculate thumbnail resolution based on element size.
      */
-    fetch(`https://vimeo.com/api/oembed.json?url=https% Lucia%3A%2F%2Fvimeo.com%2F${this.videoId}`)
+    fetch(`https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F${this.videoId}`)
       .then(response => response.json())
       .then(data => {
         let thumbnailUrl = data.thumbnail_url;
-        // Replace the resolution suffix (e.g., "_295x166" or "_295x221") with "_640x360"
-        thumbnailUrl = thumbnailUrl.replace(/-d_\d+x\d+$|_d+x\d+$/, '_640x360');
+        const { width, height } = getThumbnailDimensions(this.getBoundingClientRect());
+        const pixelRatio = window.devicePixelRatio || 1;
+        const scaledWidth = Math.round(width * pixelRatio * 0.75);
+        const scaledHeight = Math.round(height * pixelRatio * 0.75);
+        thumbnailUrl = thumbnailUrl.replace(/-d_\d+x\d+$|_d+x\d+$/, `_${scaledWidth}x${scaledHeight}`);
         this.style.backgroundImage = `url("${thumbnailUrl}")`;
+
+        // Fallback to original URL if the modified one fails
+        const img = new Image();
+        img.onerror = () => {
+          this.style.backgroundImage = `url("${data.thumbnail_url}")`;
+        };
+        img.src = thumbnailUrl;
       });
 
     let playBtnEl = this.querySelector('.ltv-playbtn');
@@ -102,4 +112,16 @@ function addPrefetch(kind, url, as) {
   }
   linkElem.crossorigin = true;
   document.head.append(linkElem);
+}
+
+/**
+ * Calculate thumbnail dimensions based on element size
+ */
+function getThumbnailDimensions({ width, height }) {
+  let newWidth = width;
+  let newHeight = height;
+  if (newWidth % 320 !== 0) {
+    newHeight = Math.round((newWidth = 100 * Math.ceil(width / 100)) / width * height);
+  }
+  return { width: newWidth, height: newHeight };
 }
