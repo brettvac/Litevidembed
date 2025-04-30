@@ -36,17 +36,19 @@ Use any of the following video IDs in your shortcodes.
 - Standard watch URL: `{youtube}https://www.youtube.com/watch?v=abc123xyz{/youtube}`
 - Shortened URL: `{youtube}https://youtu.be/abc123xyz?si=abc123{/youtube}`
 - Shorts URL: `{youtube}https://www.youtube.com/shorts/abc123xyz{/youtube}`
+- Video ID: `{youtube}abc123xyz{/youtube}`
 
 #### Vimeo
 - Standard URL: `{vimeo}https://vimeo.com/123456789{/vimeo}`
 - Player URL: `{vimeo}https://player.vimeo.com/video/123456789{/vimeo}`
+- Video ID: {vimeo}123456789{/vimeo}
 
 ## Requirements
 This plugin requires Joomla versions greater than 4.4 and PHP 8.1.
 
 Contributing
 ------------
-**[Lite Youtube Embed](https://github.com/paulirish/lite-youtube-embed)** by Paul Irish
-**[Lite Vimeo Embed](https://github.com/chriswthomson/lite-vimeo-embed/)** by Chris Thomson
-**[Facades Plugin](https://brokenlinkchecker.dev/extensions/plg-system-facades)**
-**[Lite Youtube](https://github.com/brianteeman/ytlite)** by Brian Teeman
+- **[Lite Youtube Embed](https://github.com/paulirish/lite-youtube-embed)** by Paul Irish
+- **[Lite Vimeo Embed](https://github.com/chriswthomson/lite-vimeo-embed/)** by Chris Thomson
+- **[Facades Plugin](https://brokenlinkchecker.dev/extensions/plg-system-facades)**
+- **[Lite Youtube](https://github.com/brianteeman/ytlite)** by Brian Teeman
