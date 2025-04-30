@@ -13,7 +13,7 @@ Normally, embedded videos from platforms like YouTube and Vimeo use iframes, whi
 Instead, Lite Video Embed replaces iframes with facades—static preview images that look like the video but don't load any heavy resources. The actual video only loads when the user clicks on it, improving speed, SEO, and user experience.
 
 ## Installation
-1. Just download the plugin and install it using the extensions manager. Alternatively, you can install from Web [by using this direct link](https://github.com/brettvac/Lite-vid-embed/releases/download/1.0/litevidembed.zip)
+1. Just download the plugin and install it using the extensions manager. Alternatively, you can install from Web [by using this direct link](https://github.com/brettvac/Litevidembed/releases/download/1.0/litevidembed.zip)
 2. You will then need to Activate it in Extensions > Plugins.
 
 ## How To Use Lite Video Embed
