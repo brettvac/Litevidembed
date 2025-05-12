@@ -42,8 +42,20 @@ Use any of the following video IDs in your shortcodes.
 - Player URL: `{vimeo}https://player.vimeo.com/video/123456789{/vimeo}`
 - Video ID: `{vimeo}123456789{/vimeo}`
 
-## Requirements
-This plugin requires Joomla versions greater than 4.4 and PHP 8.1.
+
+## FAQ
+**Q: What are the Joomla! and PHP requirements?**  
+**A:** This plugin requires Joomla versions greater than 4.4 and PHP 8.1.
+
+**Q: This plugin is awesome! Can I send a donation?**  
+**A:** Sure! Send your cryptonation to the following wallets:
+
+`BTC 1PXWZJcBfehqgV25zWdVDS6RF2yVMxFkZD`
+
+`Eth 0xC9b695D4712645Ba178B4316154621B284e2783D`
+
+**Q: Got any more awesome Joomla! plugins?**  
+**A:** Find them [right here](https://naftee.com)
 
 Contributing
 ------------
