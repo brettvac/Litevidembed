@@ -1,9 +1,10 @@
 <?php
 /**
  * @package    Litevidembed
- * @version    1.0
  * @license    GNU General Public License version 2
  */
+ 
+// No direct access
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -14,7 +15,7 @@ use Joomla\CMS\Language\Text;
 return new class () implements InstallerScriptInterface {
 
     private string $minimumJoomla = '4.4.0';
-    private string $minimumPhp    = '7.4.0';
+    private string $minimumPhp    = '7.2.5';
 
     public function install(InstallerAdapter $adapter): bool
     {
@@ -36,6 +37,12 @@ return new class () implements InstallerScriptInterface {
 
     public function preflight(string $type, InstallerAdapter $adapter): bool
     {
+       
+        // Basic check to ensure we're in Joomla
+        if (!defined('_JEXEC')) {
+            return false;
+        }
+        
         if (version_compare(PHP_VERSION, $this->minimumPhp, '<')) {
             Factory::getApplication()->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_PHP'), $this->minimumPhp), 'error');
             return false;

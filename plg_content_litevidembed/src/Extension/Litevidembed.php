@@ -1,12 +1,12 @@
 <?php
 /**
  * @package    Litevidembed
- * @version    1.0
+ * @version    1.1
  * @license    GNU General Public License version 2
  */
 namespace Naftee\Plugin\Content\Litevidembed\Extension;
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\Event;
@@ -68,7 +68,7 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
         }
         else
         {
-           $text = $article->text;            // Fallback for other contexts
+           $text = $article->text;  // Fallback for other contexts
         }
 
         // Exit if no valid text found
@@ -109,6 +109,14 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
                 if (($end = strpos($text, $closingTag, $start)) !== false)
                 {
                     $tagContent = substr($text, $start + $tagLength, $end - $start - $tagLength);
+
+                    if (strpos($tagContent, '<') !== false)
+                    {
+                        // We assume the first opening tag was a mistake. 
+                        // Move offset forward by 1 so we can discover the next tag in the next iteration.
+                        $offset = $start + 1;
+                        continue;
+                    }
 
                     // Initialize variables
                     $width = null;
@@ -226,22 +234,20 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
     /**
      * Extracts the YouTube video ID from a given URL or raw ID string.
      *
-     * Supports multiple YouTube URL formats, including:
-     * - https://www.youtube.com/watch?v=VIDEO_ID
-     * - https://youtu.be/VIDEO_ID
-     * - https://www.youtube.com/shorts/VIDEO_ID
-     * - video ID without URL
-     *
      * @param   string  $url  The YouTube URL or direct video ID.
      * @return  string|false  Returns the video ID if matched, or false on failure.
      */
     protected function extractYoutubeId($url)
     {
         $patterns = [
-            '/youtube\.com\/watch\?v=([^\&\?\/]+)/',
-            '/youtu\.be\/([^\&\?\/]+)/',
-            '/youtube\.com\/shorts\/([^\&\?\/]+)/',
-            '/^([a-zA-Z0-9_-]{11})$/' // Just the video ID without URL
+        // youtube.com/watch?v=VIDEO_ID
+        '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]{10,12})/',
+        // youtu.be/VIDEO_ID
+        '/youtu\.be\/([a-zA-Z0-9_-]{10,12})/',
+        // youtube.com/shorts/VIDEO_ID
+        '/youtube\.com\/shorts\/([a-zA-Z0-9_-]{10,12})/',
+        // Just the video ID without URL
+        '/^([a-zA-Z0-9_-]{10,12})$/' 
         ];
 
         foreach ($patterns as $pattern)
