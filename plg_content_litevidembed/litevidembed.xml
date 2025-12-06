@@ -6,7 +6,7 @@
   <copyright>(C) Brett Vachon.</copyright>
   <license>GNU General Public License version 2</license>
   <authorUrl>https://naftee.com</authorUrl>
-  <version>1.1</version>
+  <version>1.2</version>
   <description>PLG_CONTENT_LITEVIDEMBED_DESCRIPTION</description>
  
   <namespace path="src">Naftee\Plugin\Content\Litevidembed</namespace>

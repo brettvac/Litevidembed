@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    Litevidembed
- * @version    1.1
+ * @version    1.2
  * @license    GNU General Public License version 2
  */
 namespace Naftee\Plugin\Content\Litevidembed\Extension;
@@ -58,18 +58,22 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
         $text = null;
 
         // Handle different contexts and content properties
-        if ($context === 'com_content.article' || $context === 'com_content.category' || $context === 'com_content.featured')
-        {
-            $text = $article->text; 
-        }
-        elseif ($context === 'com_modules.module')
-        {
-            $text = $params->get('content', '');
-        }
-        else
-        {
-           $text = $article->text;  // Fallback for other contexts
-        }
+        switch ($context) 
+          {
+          case 'com_content.article':
+          case 'com_content.category':
+          case 'com_content.featured':
+             $text = $article->text;
+             break;
+
+        case 'com_modules.module':
+             $text = $params->get('content', '');
+             break;
+
+        default:
+           $text = $article->text; // Fallback for any other context
+           break;
+          }
 
         // Exit if no valid text found
         if ($text === null || empty($text))
@@ -110,13 +114,8 @@ class Litevidembed extends CMSPlugin implements SubscriberInterface
                 {
                     $tagContent = substr($text, $start + $tagLength, $end - $start - $tagLength);
 
-                    if (strpos($tagContent, '<') !== false)
-                    {
-                        // We assume the first opening tag was a mistake. 
-                        // Move offset forward by 1 so we can discover the next tag in the next iteration.
-                        $offset = $start + 1;
-                        continue;
-                    }
+                    // Remove the surrounding hyperlink if the editor added it
+                    $tagContent = strip_tags($tagContent);
 
                     // Initialize variables
                     $width = null;
