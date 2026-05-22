@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="content" method="upgrade">
   <name>plg_content_litevidembed</name>
+  <version>1.3</version>
+  <description>PLG_CONTENT_LITEVIDEMBED_DESCRIPTION</description>
   <author>Brett Vachon</author>
   <creationDate>2025-03-13</creationDate>
   <copyright>(C) Brett Vachon.</copyright>
   <license>GNU General Public License version 2</license>
-  <authorUrl>https://naftee.com</authorUrl>
-  <version>1.2</version>
-  <description>PLG_CONTENT_LITEVIDEMBED_DESCRIPTION</description>
  
   <namespace path="src">Naftee\Plugin\Content\Litevidembed</namespace>
   
@@ -37,6 +36,8 @@
       </fieldset>
     </fields>
   </config>
+  
+  <changelogurl>https://raw.githubusercontent.com/brettvac/litevidembed/refs/heads/main/update/changelog.xml</changelogurl>
   
   <updateservers>
     <server name="Lite Vid Embed updates" type="extension">https://raw.githubusercontent.com/brettvac/litevidembed/refs/heads/main/update/updates.xml</server>

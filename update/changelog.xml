@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changelogs>
+    <changelog>
+        <element>litevidembed</element>
+        <type>plugin</type>
+        <version>1.3</version>
+        <addition>
+            <item>Added the <![CDATA[<changelogurl>]]> tag to the extension manifest XML so the extension version links to the changelog in the manage view.</item>
+            <item>Added Joomla! topics to the repository and tightened the description.</item>
+        </addition>
+        <change>
+            <item>Removed the author URL from the manifest.</item>
+            <item>Updated the update server file to remove Joomla 4 and add Joomla 6.</item>
+            <item><![CDATA[Removed the <code>plg_content_</code> prefix from the <code>element</code> value in the update server file for proper update detection because Joomla! updates require only the plugin element name without the prefix.]]></item>
+            <item><![CDATA[Declared <code>$loadYoutube</code> and <code>$loadVimeo</code> as class properties instead of local variables.]]></item>
+            <item><![CDATA[Removed the <code>$autoloadlanguage</code> class variable since language strings are not needed in the plugin.]]></item>
+            <item><![CDATA[Replaced the generic Joomla! <code>Event</code> with a concrete <code>ContentPrepareEvent</code>.]]></item>
+            <item><![CDATA[Replaced calls to <code>$event-&gt;getArguments()</code> with individual getter method calls.]]></item>
+            <item>Updated the scriptfile to remove Joomla 4 support and update the minimum PHP version.</item>
+            <item><![CDATA[Replaced the <code>enqueueMessage()</code> call in the <code>catch</code> block with error logging.]]></item>
+            <item><![CDATA[Retrieved the document via the application injected through <code>CMSPlugin</code> instead of through <code>Factory</code>.]]></item>
+            <item><![CDATA[Replaced the <code>while + strpos + substr_replace</code> loop with <code>preg_replace_callback()</code> and a dedicated callback method.]]></item>
+            <item>Updated both <![CDATA[<code>lite-yt-embed.css</code>]]> and <![CDATA[<code>lite-yt-embed.js</code>]]> to the latest GitHub versions.</item>
+            <item><![CDATA[Replaced Chris W Thomson&rsquo;s Lite Vimeo Embed implementation with <code>lite-vimeo-embed2</code> by dldevinc.]]></item>
+        </change>
+    </changelog>
+    <changelog>
+        <element>litevidembed</element>
+        <type>plugin</type>
+        <version>1.2</version>
+        <addition>
+            <item>Added functionality to strip HTML from shortcodes.</item>
+        </addition>
+        <change>
+            <item>Optimized context checking logic by using a switch statement.</item>
+            <item>Tightened the description language strings in both English and French.</item>
+        </change>
+    </changelog>
+    <changelog>
+        <element>litevidembed</element>
+        <type>plugin</type>
+        <version>1.1</version>
+        <fix>
+            <item>Fixed the manifest file to properly include version information.</item>
+            <item><![CDATA[Plugin now ignores shortcode content containing HTML characters, specifically <pre>&lt;</pre>.]]></item>
+            <item>Fixed version information inside the update file and installer script.</item>
+            <item>Corrected the name of the binary file.</item>
+            <item>Added regex validation checks for YouTube URLs.</item>
+        </fix>
+    </changelog>
+    <changelog>
+        <element>litevidembed</element>
+        <type>plugin</type>
+        <version>1.0</version>
+        <addition>
+            <item>Initial release of the LiteVidEmbed plugin.</item>
+        </addition>
+    </changelog>
+</changelogs>
