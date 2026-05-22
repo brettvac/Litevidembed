@@ -56,6 +56,6 @@ Use any of the following video IDs in your shortcodes.
 
 ## Contributing
 - **Lite Youtube Embed** by Paul Irish: [https://github.com/paulirish/lite-youtube-embed](https://github.com/paulirish/lite-youtube-embed)
-- **Lite Vimeo Embed** by Chris Thomson: [https://github.com/chriswthomson/lite-vimeo-embed/](https://github.com/chriswthomson/lite-vimeo-embed/)
+- **Lite Vimeo Embed 2** by dldevinc: [https://github.com/dldevinc/lite-vimeo-embed2](https://github.com/dldevinc/lite-vimeo-embed2)
 - **Facades Plugin**: [https://brokenlinkchecker.dev/extensions/plg-system-facades](https://brokenlinkchecker.dev/extensions/plg-system-facades)
 - **Lite Youtube** by Brian Teeman: [https://github.com/brianteeman/ytlite](https://github.com/brianteeman/ytlite)
