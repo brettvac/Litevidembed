@@ -20,7 +20,7 @@
             <item><![CDATA[Replaced the <code>enqueueMessage()</code> call in the <code>catch</code> block with error logging.]]></item>
             <item><![CDATA[Retrieved the document via the application injected through <code>CMSPlugin</code> instead of through <code>Factory</code>.]]></item>
             <item><![CDATA[Replaced the <code>while + strpos + substr_replace</code> loop with <code>preg_replace_callback()</code> and a dedicated callback method.]]></item>
-            <item>Updated both <![CDATA[<code>lite-yt-embed.css</code>]]> and <![CDATA[<code>lite-yt-embed.js</code>]]> to the latest GitHub versions.</item>
+            <item><![CDATA[Updated both <code>lite-yt-embed.css</code> and <code>lite-yt-embed.js</code> to the latest GitHub versions.]]></item>
             <item><![CDATA[Replaced Chris W Thomson&rsquo;s Lite Vimeo Embed implementation with <code>lite-vimeo-embed2</code> by dldevinc.]]></item>
         </change>
     </changelog>
